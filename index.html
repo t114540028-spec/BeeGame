@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,23 +12,23 @@
       box-sizing: border-box;
     }
 
+    html,
     body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background: #1a1a2e;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
       font-family: 'Segoe UI', sans-serif;
+      background: #1a1a2e;
     }
 
-    /* ── 遊戲主容器 ── */
+    /* ── 遊戲主容器（全螢幕） ── */
     #game-container {
       position: relative;
-      width: 900px;
-      height: 506px;         /* 16:9 比例 */
+      width: 100vw;
+      height: 100vh;
       overflow: hidden;
-      border-radius: 16px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
     }
 
     /* ── 背景圖 ── */
@@ -49,19 +50,34 @@
       pointer-events: none;
     }
 
-    /* ── 蜜蜂：位置由 JS 完全管理 ── */
+    /* ── 蜜蜂：位置由 JS 完全管理，z-index 高於其他精靈 ── */
     #bee {
       width: 80px;
+      z-index: 15;
       /* left / top 由 JS 初始化後設定 */
       transition: left 0.05s linear, top 0.05s linear;
     }
 
     /* ── 隨機精靈：JS 在載入時設定 left/top ── */
-    #dragonfly  { width: 90px; }
-    #flower-pink { width: 90px; }
-    #flower-red  { width: 90px; }
-    #scallion    { width: 65px; }
-    #berry       { width: 70px; }
+    #dragonfly {
+      width: 90px;
+    }
+
+    #flower-pink {
+      width: 90px;
+    }
+
+    #flower-red {
+      width: 90px;
+    }
+
+    #scallion {
+      width: 65px;
+    }
+
+    #berry {
+      width: 70px;
+    }
 
     /* ════════════════════════════════
        箭頭控制區塊 — 與遊戲精靈分開
@@ -74,11 +90,11 @@
       left: 16px;
       display: grid;
       grid-template-columns: 64px 64px 64px;
-      grid-template-rows:    64px 64px;
+      grid-template-rows: 64px 64px;
       gap: 4px;
       /* 半透明底板讓箭頭區明顯與背景分開 */
-      background: rgba(0,0,0,0.18);
-      border: 2px solid rgba(255,220,60,0.45);
+      background: rgba(0, 0, 0, 0.18);
+      border: 2px solid rgba(255, 220, 60, 0.45);
       border-radius: 12px;
       padding: 6px;
     }
@@ -97,18 +113,18 @@
       height: 54px;
       object-fit: contain;
       /* 依按鈕位置旋轉同一張 arrow.png */
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
       transition: transform 0.1s ease, filter 0.1s ease;
     }
 
     .arrow-btn:hover img {
       transform: scale(1.15);
-      filter: drop-shadow(0 4px 8px rgba(255,200,0,0.7));
+      filter: drop-shadow(0 4px 8px rgba(255, 200, 0, 0.7));
     }
 
     .arrow-btn:active img {
       transform: scale(0.92);
-      filter: drop-shadow(0 2px 6px rgba(255,200,0,0.9)) brightness(1.2);
+      filter: drop-shadow(0 2px 6px rgba(255, 200, 0, 0.9)) brightness(1.2);
     }
 
     /* grid 位置: (row / col)
@@ -116,23 +132,157 @@
        左 → row2 col1
        下 → row2 col2
        右 → row2 col3          */
-    #btn-up    { grid-area: 1 / 2; }
-    #btn-left  { grid-area: 2 / 1; }
-    #btn-down  { grid-area: 2 / 2; }
-    #btn-right { grid-area: 2 / 3; }
+    #btn-up {
+      grid-area: 1 / 2;
+    }
+
+    #btn-left {
+      grid-area: 2 / 1;
+    }
+
+    #btn-down {
+      grid-area: 2 / 2;
+    }
+
+    #btn-right {
+      grid-area: 2 / 3;
+    }
 
     /* 方向旋轉 */
-    #btn-up    img { transform: rotate(-90deg); }
-    #btn-left  img { transform: rotate(180deg); }
-    #btn-down  img { transform: rotate(90deg);  }
-    #btn-right img { transform: rotate(0deg);   }
+    #btn-up img {
+      transform: rotate(-90deg);
+    }
 
-    #btn-up:hover    img { transform: rotate(-90deg)  scale(1.15); }
-    #btn-left:hover  img { transform: rotate(180deg)  scale(1.15); }
-    #btn-down:hover  img { transform: rotate(90deg)   scale(1.15); }
-    #btn-right:hover img { transform: rotate(0deg)    scale(1.15); }
+    #btn-left img {
+      transform: rotate(180deg);
+    }
+
+    #btn-down img {
+      transform: rotate(90deg);
+    }
+
+    #btn-right img {
+      transform: rotate(0deg);
+    }
+
+    #btn-up:hover img {
+      transform: rotate(-90deg) scale(1.15);
+    }
+
+    #btn-left:hover img {
+      transform: rotate(180deg) scale(1.15);
+    }
+
+    #btn-down:hover img {
+      transform: rotate(90deg) scale(1.15);
+    }
+
+    #btn-right:hover img {
+      transform: rotate(0deg) scale(1.15);
+    }
+
+    /* ── 成功覆蓋畫面 ── */
+    #success-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.55);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      border-radius: 16px;
+    }
+
+    #success-overlay.show {
+      display: flex;
+    }
+
+    #success-box {
+      background: linear-gradient(135deg, #fff9c4, #c8f7c5);
+      border-radius: 24px;
+      padding: 40px 60px;
+      text-align: center;
+      box-shadow: 0 8px 40px rgba(0, 180, 0, 0.35);
+      animation: popIn 0.4s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    @keyframes popIn {
+      from {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    #success-box img {
+      width: 90px;
+      margin-bottom: 12px;
+    }
+
+    #success-box h2 {
+      font-size: 2rem;
+      color: #2e7d32;
+      margin: 0;
+    }
+
+    #success-box p {
+      color: #555;
+      margin-top: 8px;
+      font-size: 1.1rem;
+    }
+
+    #btn-restart {
+      margin-top: 18px;
+      padding: 12px 36px;
+      font-size: 1.1rem;
+      background: #43a047;
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 150, 0, 0.35);
+      transition: background 0.2s;
+    }
+
+    #btn-restart:hover {
+      background: #2e7d32;
+    }
+
+    /* ── 速度提示 HUD ── */
+    #speed-hud {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      z-index: 30;
+      background: rgba(0, 0, 0, 0.45);
+      color: #ffe066;
+      font-size: 0.95rem;
+      padding: 6px 14px;
+      border-radius: 20px;
+      pointer-events: none;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    /* ── ok 强調徽章 ── */
+    .ok-badge {
+      position: absolute;
+      width: 56px;
+      z-index: 25;
+      pointer-events: none;
+      animation: okPop 0.45s cubic-bezier(.34,1.56,.64,1) forwards;
+    }
+    @keyframes okPop {
+      from { transform: scale(0) translateY(10px); opacity: 0; }
+      to   { transform: scale(1) translateY(0);    opacity: 1; }
+    }
   </style>
 </head>
+
 <body>
 
   <div id="game-container">
@@ -160,219 +310,329 @@
 
     <!-- 箭頭控制區塊（與上方精靈分開，固定在底部左側） -->
     <div id="arrow-panel">
-      <div id="btn-up"    class="arrow-btn"><img src="arrow.png" alt="up"    /></div>
-      <div id="btn-left"  class="arrow-btn"><img src="arrow.png" alt="left"  /></div>
-      <div id="btn-down"  class="arrow-btn"><img src="arrow.png" alt="down"  /></div>
+      <div id="btn-up" class="arrow-btn"><img src="arrow.png" alt="up" /></div>
+      <div id="btn-left" class="arrow-btn"><img src="arrow.png" alt="left" /></div>
+      <div id="btn-down" class="arrow-btn"><img src="arrow.png" alt="down" /></div>
       <div id="btn-right" class="arrow-btn"><img src="arrow.png" alt="right" /></div>
+    </div>
+
+
+    <!-- 速度 HUD -->
+    <div id="speed-hud">🐝 速度：<span id="speed-val">10</span> px</div>
+
+    <!-- 授粉成功覆蓋 -->
+    <div id="success-overlay">
+      <div id="success-box">
+        <img src="ok.png" alt="success" />
+        <h2>🌸 授粉成功！</h2>
+        <p>蜜蜂完成了兩朵花的授粉任務！</p>
+        <button id="btn-restart">🔄 再玩一次</button>
+      </div>
     </div>
 
   </div>
 
   <script>
-    /* ═══════════════════════════════════════════════════
-       常數設定
-       ═══════════════════════════════════════════════════ */
-    const GAME_W  = 900;          // 遊戲容器寬 (px)
-    const GAME_H  = 506;          // 遊戲容器高 (px)
-    const PAD     = 12;           // 隨機精靈碰撞盒額外間距 (px)
-    const MIN_FLOWER_DIST = 250;  // 兩花最小中心距離 (px)
-    const MAX_TRIES = 1000;       // 隨機位置最大重試次數
+    /* ─── 常數（全螢幕動態讀取） ─── */
+    let GAME_W = 900;
+    let GAME_H = 506;
+    const PAD = 12;
+    const MIN_FLOWER_DIST = 250;
+    const MAX_TRIES = 1000;
 
-    // 蜜蜂尺寸與移動步距
-    const BEE_W    = 80;
-    const BEE_H    = 80;   // 估算高度（圖片為正方形）
-    const BEE_STEP = 5;    // 每次移動像素
+    const BEE_W = 80, BEE_H = 80;
+    const INIT_STEP = 10;
+    let ARROW_PANEL = { x: 0, y: GAME_H - 166, w: 236, h: 166 };
 
-    // 箭頭面板佔用區域（左下角，對應 CSS 設定）
-    // bottom:12 left:16, grid 約 3×64 + gap×2 + padding×2 + border×2 = 222px 寬, 2×64+gap+pad×2+border×2 = 154px 高
-    const ARROW_PANEL = { x: 0, y: GAME_H - 166, w: 236, h: 166 };
+    /* ─── 遊戲狀態 ─── */
+    let beeStep = INIT_STEP;       // 移動步距
+    let berryBoosted = false;     // 草莓加速已觸發
+    let scallionSlowed = false;    // 青蔥減速已觸發
+    let flower1Visited = false;    // 粉紅花已碰
+    let flower2Visited = false;    // 紅花已碰
+    let gameOver = false;
 
-    /* ═══════════════════════════════════════════════════
-       蜜蜂狀態（由 JS 全權管理）
-       ═══════════════════════════════════════════════════ */
-    const bee = {
-      el: null,       // DOM 元素
-      x: 20,          // 初始 left
-      y: 0,           // 初始 top（DOMContentLoaded 後計算）
-      facingRight: true,  // true=朝右, false=朝左
-    };
+    /* ─── 音效 ─── */
+    const sfxClick = new Audio('audio/click.mp3');
+    const sfxError = new Audio('audio/errorse.mp3');
+    const sfxRight = new Audio('audio/rightse.mp3');
+    const sfxWin = new Audio('audio/winse.mp3');
+    function playSound(sfx) {
+      sfx.currentTime = 0;
+      sfx.play().catch(() => { });
+    }
 
-    /** 將蜜蜂目前狀態同步到 DOM */
+    const bee = { el: null, x: 20, y: 0, facingRight: true };
+
     function renderBee() {
-      bee.el.style.left      = bee.x + 'px';
-      bee.el.style.top       = bee.y + 'px';
-      // 左右翻轉：朝左時水平鏡像
+      bee.el.style.left = bee.x + 'px';
+      bee.el.style.top = bee.y + 'px';
       bee.el.style.transform = bee.facingRight ? 'scaleX(1)' : 'scaleX(-1)';
     }
 
-    /**
-     * 移動蜜蜂
-     * @param {number} dx  水平位移（正=右，負=左）
-     * @param {number} dy  垂直位移（正=下，負=上）
-     */
-    function moveBee(dx, dy) {
-      // 計算新位置
-      let nx = bee.x + dx;
-      let ny = bee.y + dy;
-
-      // ── 邊界限制 ──
-      // 左右邊界
-      nx = Math.max(0, Math.min(GAME_W - BEE_W, nx));
-
-      // 上邊界
-      ny = Math.max(0, ny);
-
-      // 下邊界：若蜜蜂即將進入箭頭面板橫向範圍，需額外抬高上限
-      const beeRight = nx + BEE_W;      // 蜜蜂右緣
-      const panelTop = ARROW_PANEL.y;   // 面板頂端
-      const panelRight = ARROW_PANEL.x + ARROW_PANEL.w; // 面板右緣
-
-      if (nx < panelRight && beeRight > ARROW_PANEL.x) {
-        // 蜜蜂 X 範圍與面板重疊 → 下方不能低於面板頂端
-        ny = Math.min(panelTop - BEE_H, ny);
-      } else {
-        // 蜜蜂在面板右側 → 正常底部邊界
-        ny = Math.min(GAME_H - BEE_H, ny);
-      }
-
-      bee.x = nx;
-      bee.y = ny;
-
-      // 更新朝向（只有左右移動才改變）
-      if (dx > 0) bee.facingRight = true;
-      if (dx < 0) bee.facingRight = false;
-
-      renderBee();
+    function updateHUD() {
+      document.getElementById('speed-val').textContent = beeStep;
     }
 
-    /* ═══════════════════════════════════════════════════
-       鍵盤控制（方向鍵）
-       ═══════════════════════════════════════════════════ */
+    /* ─── 碰撞偵測 ─── */
+    function getRect(id) {
+      const el = document.getElementById(id);
+      return {
+        x: parseInt(el.style.left) || 0,
+        y: parseInt(el.style.top) || 0,
+        w: el.offsetWidth,
+        h: el.offsetHeight
+      };
+    }
+
+    function isColliding(ax, ay, aw, ah, b) {
+      return ax < b.x + b.w && ax + aw > b.x &&
+        ay < b.y + b.h && ay + ah > b.y;
+    }
+
+    function checkCollisions() {
+      if (gameOver) return;
+      const bx = bee.x, by = bee.y;
+
+      // 1. 草莓 → 加速 +10（只一次）
+      if (!berryBoosted) {
+        const r = getRect('berry');
+        if (isColliding(bx, by, BEE_W, BEE_H, r)) {
+          beeStep += 10;
+          berryBoosted = true;
+          updateHUD();
+          playSound(sfxClick);
+          showFlash('🍓 速度 +10！', '#ff6b6b');
+        }
+      }
+
+      // 2. 蜻蜓 → 回到原點
+      {
+        const r = getRect('dragonfly');
+        if (isColliding(bx, by, BEE_W, BEE_H, r)) {
+          playSound(sfxError);
+          resetBee();
+          return;
+        }
+      }
+
+      // 3. 青蔥 → 減速 -10（只一次，最低 1）
+      if (!scallionSlowed) {
+        const r = getRect('scallion');
+        if (isColliding(bx, by, BEE_W, BEE_H, r)) {
+          beeStep = Math.max(1, beeStep - 5);
+          scallionSlowed = true;
+          updateHUD();
+          playSound(sfxClick);
+          showFlash('🧅 速度 -5！', '#74b9ff');
+        }
+      }
+
+      // 4. 兩朵花 → 授粉成功
+      if (!flower1Visited) {
+        const r = getRect('flower-pink');
+        if (isColliding(bx, by, BEE_W, BEE_H, r)) {
+          flower1Visited = true;
+          playSound(sfxRight);
+          showOkOnFlower(r);
+          showFlash('🌸 粉紅花授粉！', '#fd79a8');
+        }
+      }
+      if (!flower2Visited) {
+        const r = getRect('flower-red');
+        if (isColliding(bx, by, BEE_W, BEE_H, r)) {
+          flower2Visited = true;
+          playSound(sfxRight);
+          showOkOnFlower(r);
+          showFlash('🌺 紅花授粉！', '#e17055');
+        }
+      }
+      if (flower1Visited && flower2Visited) {
+        showSuccess();
+      }
+    }
+
+    /* ─── 在花上方顯示 ok.png ─── */
+    function showOkOnFlower(flowerRect) {
+      const badge = document.createElement('img');
+      badge.src = 'ok.png';
+      badge.className = 'ok-badge';
+      const badgeW = 56;
+      badge.style.left = (flowerRect.x + flowerRect.w / 2 - badgeW / 2) + 'px';
+      badge.style.top  = (flowerRect.y - badgeW - 4) + 'px';
+      document.getElementById('game-container').appendChild(badge);
+    }
+
+    /* ─── 閃現提示 ─── */
+    let flashTimer = null;
+    function showFlash(msg, color) {
+      let fl = document.getElementById('flash-msg');
+      if (!fl) {
+        fl = document.createElement('div');
+        fl.id = 'flash-msg';
+        Object.assign(fl.style, {
+          position: 'absolute', top: '14px', left: '50%',
+          transform: 'translateX(-50%)',
+          background: color, color: '#fff',
+          padding: '8px 22px', borderRadius: '30px',
+          fontWeight: 'bold', fontSize: '1rem',
+          zIndex: '50', pointerEvents: 'none',
+          transition: 'opacity 0.4s'
+        });
+        document.getElementById('game-container').appendChild(fl);
+      }
+      fl.style.background = color;
+      fl.style.opacity = '1';
+      fl.textContent = msg;
+      clearTimeout(flashTimer);
+      flashTimer = setTimeout(() => { fl.style.opacity = '0'; }, 1500);
+    }
+
+    /* ─── 授粉成功 ─── */
+    function showSuccess() {
+      gameOver = true;
+      playSound(sfxWin);
+      document.getElementById('success-overlay').classList.add('show');
+    }
+
+    /* ─── 重置蜜蜂 ─── */
+    function resetBee() {
+      bee.x = 20;
+      bee.y = Math.round((GAME_H - BEE_H) / 2);
+      bee.facingRight = true;
+      beeStep = INIT_STEP;
+      berryBoosted = false;
+      scallionSlowed = false;
+      flower1Visited = false;
+      flower2Visited = false;
+      gameOver = false;
+      updateHUD();
+      renderBee();
+      // 清除所有 ok 徽章
+      document.querySelectorAll('.ok-badge').forEach(el => el.remove());
+      document.getElementById('success-overlay').classList.remove('show');
+      showFlash('🔄 碰到蜻蜓！重新開始', '#6c5ce7');
+    }
+
+    /* ─── 移動蜜蜂 ─── */
+    function moveBee(dx, dy) {
+      if (gameOver) return;
+      let nx = bee.x + dx;
+      let ny = bee.y + dy;
+      nx = Math.max(0, Math.min(GAME_W - BEE_W, nx));
+      ny = Math.max(0, ny);
+      const beeRight = nx + BEE_W;
+      const panelRight = ARROW_PANEL.x + ARROW_PANEL.w;
+      if (nx < panelRight && beeRight > ARROW_PANEL.x) {
+        ny = Math.min(ARROW_PANEL.y - BEE_H, ny);
+      } else {
+        ny = Math.min(GAME_H - BEE_H, ny);
+      }
+      bee.x = nx; bee.y = ny;
+      if (dx > 0) bee.facingRight = true;
+      if (dx < 0) bee.facingRight = false;
+      renderBee();
+      checkCollisions();
+    }
+
+    /* ─── 鍵盤控制 ─── */
     window.addEventListener('keydown', (e) => {
+      const s = beeStep;
       switch (e.key) {
-        case 'ArrowUp':    e.preventDefault(); moveBee( 0, -BEE_STEP); break;
-        case 'ArrowDown':  e.preventDefault(); moveBee( 0, +BEE_STEP); break;
-        case 'ArrowLeft':  e.preventDefault(); moveBee(-BEE_STEP, 0);  break;
-        case 'ArrowRight': e.preventDefault(); moveBee(+BEE_STEP, 0);  break;
+        case 'ArrowUp': e.preventDefault(); moveBee(0, -s); break;
+        case 'ArrowDown': e.preventDefault(); moveBee(0, +s); break;
+        case 'ArrowLeft': e.preventDefault(); moveBee(-s, 0); break;
+        case 'ArrowRight': e.preventDefault(); moveBee(+s, 0); break;
       }
     });
 
-    /* ═══════════════════════════════════════════════════
-       按鈕點擊控制（畫面上的箭頭按鈕）
-       ═══════════════════════════════════════════════════ */
     function bindArrowBtn(id, dx, dy) {
       document.getElementById(id).addEventListener('click', () => moveBee(dx, dy));
     }
 
-    /* ═══════════════════════════════════════════════════
-       隨機精靈位置配置（其餘物件）
-       ═══════════════════════════════════════════════════ */
-    // 隨機精靈定義：id、寬、高（高度估算）
+    /* ─── 隨機精靈位置 ─── */
     const SPRITES = [
-      { id: 'flower-pink', w: 90,  h: 90,  isFlower: true  },
-      { id: 'flower-red',  w: 90,  h: 90,  isFlower: true  },
-      { id: 'dragonfly',   w: 90,  h: 80,  isFlower: false },
-      { id: 'scallion',    w: 65,  h: 90,  isFlower: false },
-      { id: 'berry',       w: 70,  h: 80,  isFlower: false },
+      { id: 'flower-pink', w: 90, h: 90, isFlower: true },
+      { id: 'flower-red', w: 90, h: 90, isFlower: true },
+      { id: 'dragonfly', w: 90, h: 80, isFlower: false },
+      { id: 'scallion', w: 65, h: 90, isFlower: false },
+      { id: 'berry', w: 70, h: 80, isFlower: false },
     ];
 
-    function rand(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
+    function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
     function overlaps(a, b) {
-      return !(
-        a.x + a.w + PAD <= b.x ||
-        b.x + b.w + PAD <= a.x ||
-        a.y + a.h + PAD <= b.y ||
-        b.y + b.h + PAD <= a.y
-      );
+      return !(a.x + a.w + PAD <= b.x || b.x + b.w + PAD <= a.x || a.y + a.h + PAD <= b.y || b.y + b.h + PAD <= a.y);
     }
-
     function centerDist(a, b) {
-      const ax = a.x + a.w / 2, ay = a.y + a.h / 2;
-      const bx = b.x + b.w / 2, by = b.y + b.h / 2;
-      return Math.hypot(ax - bx, ay - by);
+      return Math.hypot(a.x + a.w / 2 - (b.x + b.w / 2), a.y + a.h / 2 - (b.y + b.h / 2));
     }
-
-    function randomPos(sprite) {
-      return {
-        x: rand(0, GAME_W - sprite.w),
-        y: rand(0, GAME_H - sprite.h),
-        w: sprite.w,
-        h: sprite.h,
-      };
+    function randomPos(s) {
+      return { x: rand(0, GAME_W - s.w), y: rand(0, GAME_H - s.h), w: s.w, h: s.h };
     }
-
     function applyPos(id, pos) {
       const el = document.getElementById(id);
       el.style.left = pos.x + 'px';
-      el.style.top  = pos.y + 'px';
+      el.style.top = pos.y + 'px';
     }
-
     function placeSprites() {
-      const placed = [];
-
-      // 蜜蜂禁區（初始位置左側區塊）
-      placed.push({ x: 0, y: 0, w: 120, h: GAME_H });
-      // 箭頭面板禁區
-      placed.push(ARROW_PANEL);
-
+      const placed = [
+        { x: 0, y: 0, w: 120, h: GAME_H },
+        ARROW_PANEL
+      ];
       let flowerPos = [];
-
       for (const sprite of SPRITES) {
         let pos = null;
-
         for (let t = 0; t < MAX_TRIES; t++) {
-          const candidate = randomPos(sprite);
-
-          const clash = placed.some(p => overlaps(candidate, p));
-          if (clash) continue;
-
-          if (sprite.isFlower && flowerPos.length > 0) {
-            const tooClose = flowerPos.some(
-              fp => centerDist(candidate, fp) < MIN_FLOWER_DIST
-            );
-            if (tooClose) continue;
-          }
-
-          pos = candidate;
-          break;
+          const c = randomPos(sprite);
+          if (placed.some(p => overlaps(c, p))) continue;
+          if (sprite.isFlower && flowerPos.some(fp => centerDist(c, fp) < MIN_FLOWER_DIST)) continue;
+          pos = c; break;
         }
-
-        if (!pos) {
-          console.warn(`[BeeGame] 無法為 ${sprite.id} 找到完全不重疊的位置，使用備用位置。`);
-          pos = randomPos(sprite);
-        }
-
+        if (!pos) pos = randomPos(sprite);
         placed.push(pos);
         if (sprite.isFlower) flowerPos.push(pos);
         applyPos(sprite.id, pos);
       }
-
-      console.log('🐝 蜜蜂授粉遊戲 - 隨機位置配置完成');
     }
 
-    /* ═══════════════════════════════════════════════════
-       初始化
-       ═══════════════════════════════════════════════════ */
+    /* ─── 初始化 ─── */
     window.addEventListener('DOMContentLoaded', () => {
-      // 初始化蜜蜂 DOM 參考與位置
+      // 讀取實際容器尺寸（全螢幕）
+      const gc = document.getElementById('game-container');
+      GAME_W = gc.clientWidth || window.innerWidth;
+      GAME_H = gc.clientHeight || window.innerHeight;
+      ARROW_PANEL.y = GAME_H - 166;  // 重算第一个屬性
+
       bee.el = document.getElementById('bee');
-      bee.x  = 20;
-      bee.y  = Math.round((GAME_H - BEE_H) / 2);  // 垂直置中
+      bee.x = 20;
+      bee.y = Math.round((GAME_H - BEE_H) / 2);
       renderBee();
+      updateHUD();
 
-      // 綁定箭頭按鈕
-      bindArrowBtn('btn-up',    0,        -BEE_STEP);
-      bindArrowBtn('btn-down',  0,        +BEE_STEP);
-      bindArrowBtn('btn-left',  -BEE_STEP, 0);
-      bindArrowBtn('btn-right', +BEE_STEP, 0);
+      bindArrowBtn('btn-up', 0, -beeStep);
+      bindArrowBtn('btn-down', 0, +beeStep);
+      bindArrowBtn('btn-left', -beeStep, 0);
+      bindArrowBtn('btn-right', +beeStep, 0);
 
-      // 隨機放置其他精靈
+      // 讓箭頭按鈕能用動態步距（覆寫固定 beeStep 問題）
+      ['btn-up', 'btn-down', 'btn-left', 'btn-right'].forEach(id => {
+        const el = document.getElementById(id);
+        el.replaceWith(el.cloneNode(true)); // 清除舊監聽
+      });
+      document.getElementById('btn-up').addEventListener('click', () => moveBee(0, -beeStep));
+      document.getElementById('btn-down').addEventListener('click', () => moveBee(0, +beeStep));
+      document.getElementById('btn-left').addEventListener('click', () => moveBee(-beeStep, 0));
+      document.getElementById('btn-right').addEventListener('click', () => moveBee(+beeStep, 0));
+
       placeSprites();
+
+      document.getElementById('btn-restart').addEventListener('click', () => {
+        resetBee();
+        placeSprites();
+      });
     });
   </script>
 
 </body>
+
 </html>
